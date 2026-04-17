@@ -1,0 +1,11 @@
+[package]
+name = "ess-backbone-protocol-spec"
+version = "0.1.0"
+edition = "2021"
+description = "Public specification for the ESS Backbone Protocol"
+
+[dependencies]
+# Core engine dependencies (Reference only)
+libp2p = "0.52"
+tokio = { version = "1", features = ["full"] }
+
