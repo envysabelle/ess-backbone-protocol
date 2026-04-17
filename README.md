@@ -71,7 +71,7 @@ The **ESS Core Engine (Private Source)** is available for:
 #### **Technical Consultation & Access**
 For high-level architectural briefings, private node deployment, or to request access to the SDK for integrated development:
 
-* **Lead Architect:** Moko
+* **Lead Architect:** Moko & Noviya
 * **Secure Communications:** concierge@envysabelle.com
 * **Telegram | Instagram:** @envysabelle | @envy.sabelle
 
