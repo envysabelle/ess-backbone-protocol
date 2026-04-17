@@ -6,6 +6,8 @@
 ![Runtime - Rust/Hardened](https://img.shields.io/badge/Runtime-Rust--Hardened-orange.svg)
 ![Network - Active Global Mesh](https://img.shields.io/badge/Network-Active_Global_Mesh-green.svg)
 
+ESS is a self-healing P2P backbone that autonomously remediates network anomalies using a custom Rust-based decision plane.
+
 ---
 
 ## Executive Overview
