@@ -1,5 +1,8 @@
-# ESS Backbone Protocol
-### Autonomous P2P Infrastructure · Post‑Quantum Ready · Sovereign Mesh
+# ESS Black Box — The Syndicate P2P Protocol
+
+> Autonomous, privacy-preserving, encrypted P2P supernode network built with Rust and libp2p.  
+> **Advanced cryptographic & autonomous features fully implemented (Phases 1–8)**  
+> *Onion routing, Post‑Quantum hybrid KEM, Shamir's Secret Sharing, CRDT state, Governance engine, Ghost engine, ID rotation, PUF simulation, and more.*
 
 ![Infrastructure - Mission Critical](https://img.shields.io/badge/Infrastructure-Mission--Critical-red.svg)
 ![Architecture - Zero Trust](https://img.shields.io/badge/Architecture-Zero--Trust-blue.svg)
@@ -8,127 +11,347 @@
 ![Crypto - Post‑Quantum](https://img.shields.io/badge/Crypto-Post--Quantum-blueviolet.svg)
 ![State - CRDT Convergent](https://img.shields.io/badge/State-CRDT_Convergent-brightgreen.svg)
 
-**ESS** is a self‑healing, post‑quantum secure P2P backbone that autonomously remediates network anomalies using a custom Rust‑based decision plane. It combines hybrid post‑quantum key exchange, onion‑routed privacy, and conflict‑free replicated state (CRDT) to deliver an infrastructure layer that is both sovereign and verifiable.
+---
+
+## About the Project
+
+ESS Black Box is an autonomous peer‑to‑peer network designed for encrypted communication, decentralized node discovery, and authority‑based security policies. Each node acts as a **supernode** that onboards others using cryptographic identities.
+
+The system has gone through **eight hardening phases** toward production, covering:
+- Base security (nonce, timestamp, rate limiting, replay protection)
+- Persistence, auto‑onboarding, Kademlia DHT
+- Structured JSON logging, error handling
+- Unit & integration tests, orchestration scripts
+- Systemd service, health‑check endpoints, dashboard
+- Onion routing with X25519 DH + ChaCha20‑Poly1305 (configurable, default off)
+- Post‑Quantum Hybrid KEM (ML‑KEM‑1024 + X25519)
+- Shamir's Secret Sharing for identity key splitting
+- CRDT distributed state with vector clocks and Merkle‑DAG
+- Governance engine with quorum voting
+- Software PUF simulation (hardware PUF ready for production upgrade)
+- Deterministic internal key rotation (hash chain, PeerID stable)
 
 ---
 
-## Executive Overview
+## Key Features
 
-The **Electronic Secure System (ESS)** Backbone Protocol is a high‑availability, decentralized infrastructure layer designed for secure, sovereign, and deterministic data transit. Engineered from the ground up in Rust, ESS solves the inherent instability of traditional P2P networks through its proprietary **Ghost Engine**—an autonomous decision plane that provides continuous network remediation and intelligent traffic orchestration.
-
-Unlike conventional protocols, ESS operates on a **layered architecture** that separates policy distribution, high‑throughput data execution, privacy‑preserving transport, and globally consistent state management. The current implementation (v4.0) is fully operational across three continents and includes:
-
-* **Hybrid Post‑Quantum Key Exchange** – ML‑KEM‑1024 (NIST FIPS 203) combined with X25519 via concatenation + HKDF
-* **Onion Routing** – multi‑hop encryption with X25519 ephemeral‑static DH and ChaCha20‑Poly1305, including verified hop ownership
-* **CRDT State Layer** – five conflict‑free replicated data types (LWW‑Register, G‑Set, G‑Counter, OR‑Set, LWW‑Map) with Merkle‑DAG audit trail
-* **Shamir’s Secret Sharing** – threshold key splitting over GF(2⁸) for keystore resilience
-* **Internal Key Rotation** – 24‑hour deterministic hash chain for forward secrecy, without changing PeerID
-* **Governance Engine** – proposal/vote/execute lifecycle with quorum‑based approval and persistent storage
-* **Binary Serialization** – all protocol messages use compact Bincode encoding
-* **Secure Dashboard** – HTTP monitoring interface with mandatory token authentication
-
----
-
-## 🌍 Strategic Global Footprint
-
-The ESS Network is currently deployed across a **High‑Performance Strategic Triangle**, ensuring sub‑100ms cross‑continental orchestration and 99.99% infrastructure durability:
-
-| Region | Gateway Zone | Strategic Function |
-| :--- | :--- | :--- |
-| **Americas** | California, USA | Primary North American Ingress/Egress |
-| **EMEA** | London, UK | Trans‑Atlantic Transit & European Sovereignty |
-| **APAC** | Singapore | Asia‑Pacific Hub & Low‑Latency Routing |
-
-*This global mesh enables deterministic failover; if a regional gateway becomes unavailable, the Ghost Engine re‑routes the global backbone state in real‑time.*
+- **Multi‑Supernode Mesh** — pure supernode mesh, no separate relay/client tiers; all nodes equal
+- **Secure Onboarding** — serial‑number verification, ed25519 signatures, nonce + timestamp, rate limiting
+- **Policy Engine** — file‑based authority with role‑based access control (RBAC) and allowed actions
+- **Ghost Engine** — autonomous decision engine for peer reputation, quarantine, drop, and sleep/wake cycles
+- **Onion Routing** — multi‑hop encrypted routing with X25519 ephemeral DH + ChaCha20‑Poly1305 (integrated, optional; enabled via NetworkConfig)
+- **Post‑Quantum Hybrid KEM** — ML‑KEM‑1024 + X25519 key exchange with concatenation + HKDF derivation
+- **Shamir's Secret Sharing (SSS)** — threshold (k, n) splitting of identity keys over GF(2⁸)
+- **Governance Engine** — proposal lifecycle, supernode voting, quorum‑based peer activation
+- **CRDT State** — LWW‑Register, G‑Set, G‑Counter, OR‑Set, LWW‑Map for Strong Eventual Consistency across the mesh
+- **Internal Key Rotation** — deterministic 24‑hour peer identity rotation derived from seed + epoch (PeerID remains stable)
+- **PUF Simulation** — software‑based Physical Unclonable Function for machine binding (hardware‑ready)
+- **Dashboard & Health Check** — REST API at `/api/ess/*` and HTML dashboard on port `8080`
+- **Structured Logging** — JSON output via `tracing`, ready for observability stacks
+- **Systemd Service Support** — ready to run as a Linux service with auto‑restart
+- **Prometheus Metrics** — onboarding counters available as optional metrics
 
 ---
 
-## 🛡️ Technical Core & Resilience Pillars
+## Security & Audit Status
 
-### 1. Autonomous Ghost Engine (Intelligence Layer)
-The Ghost Engine is a self‑correcting state machine that continuously audits the "Health‑of‑Network." It utilizes high‑fidelity telemetry (latency jitter, reliability coefficients, and cryptographic integrity) to autonomously:
-* **Identify** peer anomalies or Byzantine behavior.
-* **Assess** network degradation risks using a configurable health score (0–100).
-* **Remediate** via automatic quarantine, throttling, re‑routing, or panic/zeroize.
+**Current Status:** Pre‑Audit / Hardening Phase.
 
-The decision taxonomy includes 13 distinct actions, from `DropPeer` and `AdjustReputation` to `Sleep`, `Beacon`, and `Panic`. All decisions are driven by a pluggable policy engine that can be tailored for different deployment environments.
-
-### 2. Action‑Scoped ABAC Enforcement
-ESS departs from static role‑based access. We implement **Action‑Based Attribute Access Control (ABAC)**. Every primitive—`Connect`, `Route`, `GatewayAccess`, `Egress`, `WebTraffic`, `AdminUpdate`—is guarded by a cryptographic gate. Access is never assumed; it is verified against the current global authority state at every hop.
-
-### 3. Hybrid Post‑Quantum Cryptography
-To resist “harvest now, decrypt later” threats, ESS uses a **hybrid KEM**: ML‑KEM‑1024 (lattice‑based, quantum‑resistant) and X25519 (classical, well‑vetted). The two shared secrets are combined through concatenation + HKDF (RFC 5869) with domain separation. A successful attacker must break **both** primitives to compromise the session key. All key material is managed with `ZeroizeOnDrop`.
-
-### 4. Onion Routing with Verified Ownership
-Traffic privacy is provided by a multi‑hop onion routing layer. Each relay decrypts exactly one layer using X25519 ephemeral‑static Diffie‑Hellman and ChaCha20‑Poly1305 AEAD. To prevent malicious hop injection, every hop must present an **activation certificate** signed by the network authority, binding its PeerID to its X25519 public key. Without a valid certificate, the relay is rejected at the cryptographic level.
-
-### 5. CRDT World State Synchronization
-ESS maintains a globally consistent network state without consensus rounds. Five CRDT primitives (LWW‑Register, G‑Set, G‑Counter, OR‑Set, LWW‑Map) guarantee Strong Eventual Consistency—merge operations are commutative, associative, and idempotent. A vector clock tracks causality, and a Merkle‑DAG provides tamper‑evident history.
-
-### 6. Shamir’s Secret Sharing (SSS) over GF(2⁸)
-The node’s master seed is protected by a threshold secret sharing scheme over the finite field GF(2⁸). Any *k* of *n* shards can reconstruct the seed; any fewer reveal no information. Shards are stored with file permissions `0600` and are `ZeroizeOnDrop`‑protected.
-
-### 7. Deterministic Internal Key Rotation
-Every 24 hours, the node derives a new set of internal keys (e.g., onion static secret) via a **one‑way hash chain**. The PeerID and Ed25519 identity key remain stable, preserving mesh connectivity. The hash chain offers backward secrecy: compromise of the current seed does not reveal past seeds.
-
-### 8. Governance Engine
-A complete **proposal‑voting‑execution** lifecycle enables decentralized protocol upgrades and peer activation. In bootstrap mode (fewer than 2 supernodes), proposals are auto‑executed. Once quorum is reached, decisions are enforced on‑chain. Governance state is persisted with HMAC‑SHA256 integrity protection.
-
-### 9. Binary Protocol Serialization
-All request‑response messages (direct, config, gateway, web, onboard) use **Bincode** for compact, efficient binary encoding. The custom `BincodeCodec` enforces a 64 MiB maximum frame size to prevent resource exhaustion.
-
-### 10. Secure Dashboard
-A local HTTP dashboard provides real‑time telemetry (node health, connected peers, authority version, ghost state). Access is protected by a mandatory Bearer token (constant‑time comparison) and security headers (`X‑Content‑Type‑Options: nosniff`, `X‑Frame‑Options: DENY`).
+The cryptographic stack (ML‑KEM‑1024, X25519, GF(2⁸) SSS, ChaCha20‑Poly1305) is functionally integrated. Key derivation uses HKDF (RFC 5869) with domain separation. All key material is managed with `ZeroizeOnDrop`. The implementation is under active hardening; a formal third‑party cryptographic audit is scheduled post‑Seed funding. Do not use in mission‑critical production environments until the formal audit is published.
 
 ---
 
-## 🏗️ Architectural Framework
+## Architecture
 
-The ESS Protocol separates node responsibilities into distinct operational planes:
+```text
+┌─────────────┐     onboarding      ┌─────────────┐
+│  Supernode  │◄──────────────────►│  Supernode  │
+│  London     │                     │  Singapore  │
+└─────────────┘                     └─────────────┘
+      ▲                                    ▲
+      │ onboarding                         │
+      │                                    │
+┌─────────────┐                     ┌─────────────┐
+│  Supernode  │                     │  ... others  │
+│ California  │                     │             │
+└─────────────┘                     └─────────────┘
+```
 
-1.  **Control Plane (Authority Manager) –** Verified policy propagation and trust‑graph management.
-2.  **Decision Plane (Ghost Runtime) –** Autonomous assessment and proactive security enforcement.
-3.  **Privacy Plane (Onion Routing) –** Multi‑hop traffic encryption and metadata protection.
-4.  **Data Plane (Hardened Swarm) –** Encrypted transit, smart routing, rate limiting, and protocol‑level multiplexing.
-5.  **State Plane (CRDT + Storage) –** Convergent world state, audit trail, and atomic JSON persistence.
-6.  **Interface Plane (Dashboard + Gateway) –** Real‑time monitoring and secure HTTP ingress.
-
----
-
-## 📊 Implementation Status
-
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Hybrid PQC (ML‑KEM + X25519) | 🟢 Complete | Concatenation + HKDF (Sha3‑256) |
-| Shamir’s Secret Sharing | 🟢 Complete | GF(2⁸), arbitrary (k,n) |
-| Onion Routing | 🟢 Complete | Verified hop ownership, fixed‑size padding |
-| CRDT State Layer | 🟢 Complete | 5 types + Merkle‑DAG |
-| Ghost Engine | 🟢 Complete | Software policy layer, 13 decisions |
-| Governance Engine | 🟢 Complete | Proposal/vote/store, bootstrap mode |
-| Internal Key Rotation | 🟢 Complete | 24h hash chain, PeerID stable |
-| Binary Serialization (Bincode) | 🟢 Complete | All behaviours |
-| Secure Dashboard | 🟢 Complete | Token auth, security headers |
-| Hardware PUF / SBB | 🟡 Roadmap | Software simulation placeholder |
-| Ghost Engine (Ring‑1, Hardware) | 🔴 Roadmap | Planned for Sabelle Black‑Box |
+All nodes are equal supernodes. Governance, state sync, and onion routing run directly between them.
 
 ---
 
-## 🚀 Engagement & Commercial Licensing
+## Project Structure
 
-This repository serves as the public documentation and specification entry point for the ESS Backbone Protocol. The core engine remains proprietary to ensure the integrity of the live global network.
-
-### Strategic Partnerships
-The **ESS Core Engine (Private Source)** is available for:
-* **Enterprise Infrastructure:** Secure backbone for private corporate meshes.
-* **Governmental/Defense:** Sovereign communication layers with absolute data isolation.
-* **Global ISP/Telecom:** Edge‑computing orchestration and secure transit.
-
-#### **Technical Consultation & Access**
-For high‑level architectural briefings, private node deployment, or to request access to the SDK for integrated development:
-
-* **Lead Architects:** Moko & Noviya
-* **Secure Communications:** concierge@envysabelle.com
-* **Telegram | Instagram:** @envysabelle | @envy.sabelle
+```text
+src/
+├── main.rs                 # Entrypoint & lifecycle
+├── onboarding.rs           # Identity, SN verification, auto‑onboard, X25519 key gen
+├── security_runtime.rs     # Identity verification, nonce cache, rate limiter
+├── network_controller.rs   # Central network & onboarding controller
+├── world_state.rs          # Global state, peer activation, persistence
+├── network/
+│   ├── runtime/
+│   │   ├── types.rs        # OnboardRequest/Response, Behaviour, Event
+│   │   ├── events.rs       # Main event loop (all protocols + onion relay)
+│   │   ├── governance.rs   # Peer registration & onboarding verification
+│   │   ├── runner.rs       # Swarm creation & runtime context
+│   │   ├── support.rs      # Dashboard builders, onion helper functions
+│   │   └── swarm.rs        # Swarm builder with all behaviours
+│   └── util.rs             # Peer address registration, public address checks
+├── authority.rs            # Authority & access manager (RBAC)
+├── ghost.rs                # Ghost Engine core loop, states, commands
+├── ghost_bridge.rs         # Bridge between Ghost and network events
+├── ghost_health.rs         # Ghost health scoring & assessment
+├── ghost_policy.rs         # Autonomous decision policy
+├── ghost_runtime.rs        # Runtime handle & scheduler for Ghost actions
+├── ghost_store.rs          # Persistence for Ghost state snapshots
+├── dashboard/
+│   ├── api.rs              # JSON payload builders
+│   ├── http.rs             # HTTP request routing
+│   ├── model.rs            # Dashboard data models
+│   ├── server.rs           # Embedded HTTP server (Tokio)
+│   ├── service.rs          # Dashboard service logic
+│   └── store.rs            # In‑memory store for dashboard data
+├── gateway.rs              # Gateway rate limiter, audit, request/response structs
+├── message.rs              # Direct message structs (request/response)
+├── onion.rs                # Onion routing crypto (X25519, ChaCha20, layers)
+├── pqc.rs                  # Post‑Quantum Hybrid KEM (ML‑KEM‑1024 + X25519)
+├── sss.rs                  # Shamir's Secret Sharing over GF(2⁸)
+├── crdt_state.rs           # CRDT LWW‑Register, G‑Set, LWW‑Map, vector clock
+├── governance/
+│   ├── engine.rs           # Governance engine (proposals, voting, quorum)
+│   ├── messages.rs         # Governance message types
+│   ├── mod.rs
+│   └── store.rs            # Governance state persistence
+├── id_rotation.rs          # Deterministic internal key rotation (hash chain)
+├── puf.rs                  # Software PUF simulation (hardware fingerprint)
+├── config.rs               # Config bundle, network config, request/response structs
+├── identity.rs             # ESS identity (keypair + authority binding)
+├── bootstrap_cache.rs      # Bootstrap peer cache persistence
+├── kad_store.rs            # Kademlia record persistence (sled)
+├── storage.rs              # World state atomic JSON storage
+├── system_event.rs         # Internal event bus
+├── web.rs                  # Web service registry, ESS URI parser
+├── control_loop.rs         # System control loop (health checks, sync, rotation)
+├── dashboard_bridge.rs     # Bridge for dashboard telemetry
+├── security.rs             # Security helpers & signing material
+└── tests/                  # Unit & integration tests, scripts
+```
 
 ---
-*© 2026 PT Envy Sabelle Sinergi. All Rights Reserved. Engineered with the uncompromising safety and performance of Rust.*
+
+## Configuration
+
+All configuration is done via environment variables.
+
+| Variable | Description | Default / Example |
+|---|---|---|
+| `ESS_MASTER_SECRET` | Secret for serial‑number HMAC checksum | `Sabelle_Syndicate_...` |
+| `NODE_ROLE` | `supernode`, `gateway`, or `client` | `supernode` |
+| `PUBLIC_IP` | Node public IP (for external multiaddr) | `198.51.100.146` |
+| `P2P_PORT` | P2P listening port | `5001` |
+| `BOOTSTRAP_P2P_MULTIADDRS` | Bootstrap addresses (empty for first node) | `/ip4/.../tcp/5001/p2p/12D...` |
+| `RUST_LOG` | Log level (`info`, `debug`, etc.) | `info` |
+| `AUTHORITY_FILE` | Path to authority state file | `data/authority.bin` |
+| `AUTHORITY_SUPERNODES` | Comma‑separated supernode peer IDs (genesis only) | — |
+| `AUTHORITY_PUBLIC_KEY_B64` | Base64 ed25519 public key for authority | — |
+| `KAD_STORE_PATH` | Persistent Kademlia store path | `data/kad_store` |
+| `ESS_AUTHORITY_ROLE` | Authority role for identity binding | — |
+| `ESS_CLEAR_AUTHORITY_BINDING` | Clear authority binding on boot (`1`/`true`) | — |
+
+Onion routing is enabled via `NetworkConfig` (see `src/config.rs`). By default, `onion_hops = 0` (direct). To enable, set `onion_hops > 0` and `onion_payload_size` (e.g., `1400`) in the source or provide a custom `NetworkConfig` at startup.
+
+---
+
+## How to Run
+
+### Prerequisites
+
+- Rust toolchain (edition 2021)
+- `cargo` installed
+- Environment variables set, or a `.env` file
+
+### 1. Clone and build
+
+```bash
+git clone https://github.com/envysabelle/ess-p2p-rs.git
+cd ess-p2p-rs
+cargo build --release
+```
+
+### 2. Run the first supernode (London)
+
+The first node does not need a bootstrap address.
+
+```bash
+export ESS_MASTER_SECRET="Sabelle_Syndicate_Syndicate_2026_Top_Secret"
+export NODE_ROLE=supernode
+export PUBLIC_IP=198.51.100.146
+export P2P_PORT=5001
+cargo run --release
+```
+
+### 3. Run the second supernode (Singapore)
+
+Point its bootstrap to the first node's multiaddress.
+
+```bash
+export ESS_MASTER_SECRET="..."       # same secret
+export NODE_ROLE=supernode
+export PUBLIC_IP=203.0.113.49
+export P2P_PORT=5001
+export BOOTSTRAP_P2P_MULTIADDRS="/ip4/198.51.100.146/tcp/5001/p2p/12D3Koo..."
+cargo run --release
+```
+
+After boot, the node automatically sends an onboarding request to the first supernode, and the governance engine will propose & vote to activate the new peer.
+
+---
+
+## Testing
+
+### Unit and Integration Tests
+
+```bash
+cargo test --test onboarding_tests
+cargo test --test onboarding_integration -- --nocapture
+cargo test --lib                       # run all unit tests
+```
+
+### Three‑Supernode Orchestration
+
+Run on three different machines (e.g., London, Singapore, California) to test onboarding, consensus, and routing.
+
+```bash
+./tests/run_three_node.sh
+```
+
+---
+
+## Observability
+
+### Dashboard HTTP API
+
+The dashboard runs on port `8080` by default. Key endpoints:
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/ess/dashboard` | Full health summary |
+| `GET /api/ess/nodes` | List of known nodes |
+| `GET /api/ess/nodes/{peer_id}` | Detailed node health |
+| `GET /api/ess/routes` | Active routes |
+| `GET /api/ess/logs?limit=100&level=warn` | Filtered logs |
+| `GET /api/ess/authority` | Authority state snapshot |
+| `GET /api/policy` | Current security policy |
+| `POST /api/policy/reload` | Reload policy from file |
+| `POST /api/ess/send` | Send direct message to a peer (`{"peer_id":"...", "message":"..."}`) |
+
+The root path (`/`) serves an HTML dashboard. Access is protected with a mandatory Bearer token (constant‑time comparison).
+
+### Structured Logging
+
+All logs are emitted in JSON via `tracing` and can be piped to any log aggregator.
+
+### Health Check
+
+`GET /health` returns a quick JSON status. The dashboard also provides comprehensive health data.
+
+---
+
+## Production‑Readiness Phases
+
+| Phase | Description | Status |
+|---|---|---|
+| 0 | Backup and branching | ✅ |
+| 1 | MASTER_SECRET_KEY from env, nonce + timestamp, rate limit, replay protection | ✅ |
+| 2 | Persist activated_peers, auto‑send onboarding, Kademlia integration | ✅ |
+| 3 | Replace `expect` with error handling, structured JSON logging | ✅ |
+| 4 | Unit and integration tests, 3‑node script | ✅ |
+| 5 | Systemd service, health check, Prometheus metrics | ✅ |
+| 6 | Onion routing (X25519 + ChaCha20‑Poly1305, integrated with fallback) | ✅ *(default off)* |
+| 7 | Post‑Quantum Hybrid KEM (ML‑KEM‑1024 + X25519) | ✅ |
+| 8 | Shamir's Secret Sharing, CRDT state, Governance engine, PUF simulation, ID rotation | ✅ |
+
+Advanced features (onion routing, PQC, CRDT, governance) are implemented and working; onion routing is opt‑in, and the PUF is a software simulation. Hardware PUF and SMM‑based Ghost are on the roadmap for production hardware.
+
+---
+
+## Systemd Service
+
+Example unit file at `/etc/systemd/system/ess-p2p.service`:
+
+```ini
+[Unit]
+Description=ESS P2P Supernode
+After=network.target
+
+[Service]
+User=ess
+Group=ess
+WorkingDirectory=/opt/ess-p2p
+Environment="ESS_MASTER_SECRET=..."
+Environment="NODE_ROLE=supernode"
+Environment="PUBLIC_IP=198.51.100.146"
+Environment="P2P_PORT=5001"
+Environment="BOOTSTRAP_P2P_MULTIADDRS=..."
+ExecStart=/opt/ess-p2p/target/release/ess-p2p-rs
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable it with:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now ess-p2p
+```
+
+---
+
+## Implementation Status (Detailed)
+
+| Component | Whitepaper v4.0 | Actual Code (May 2026) | Status |
+|---|---|---|---|
+| Hybrid PQC (ML‑KEM + X25519) | ✅ Full match | ✅ Full match | MATCH |
+| SSS over GF(2⁸) | ✅ Full match | ✅ Full match | MATCH |
+| Kademlia DHT | ✅ Full match | ✅ Full match | MATCH |
+| ID Rotation (internal keys) | ✅ Full match | ✅ Full match | MATCH |
+| Ghost Engine (software) | ✅ Full match | ✅ Full match | MATCH |
+| Governance Engine | ✅ Full match | ✅ Full match | MATCH |
+| Onion Routing | ✅ Integrated | ✅ Integrated, configurable | MATCH |
+| CRDT (5 types + Merkle‑DAG) | ✅ Full match | ✅ Full match | MATCH |
+| Binary Serialization (Bincode) | ✅ Full match | ✅ Full match | MATCH |
+| PUF (software sim) | ✅ SW Simulation | ✅ SW Simulation | MATCH |
+| Hardware (SBB, Ring‑1 Ghost) | ❌ Roadmap | ❌ Roadmap | MATCH |
+
+The onion routing is fully wired into the event loop and `NetworkController`. It activates when `onion_hops > 0` in the `NetworkConfig`. Padding size is configurable and defaults to 1400 bytes.
+
+---
+
+## Syndicate Participation & Integration
+
+ESS Black Box is an autonomous infrastructure. Direct code contributions are currently restricted to core engineers and verified Genesis Seat holders.
+
+If you are a hardware vendor (for SRAM PUF integration) or represent an institutional entity seeking an architectural review, please contact the concierge at:
+
+- **Email:** concierge@envysabelle.com  
+- **Web:** https://envysabelle.com
+
+---
+
+## License & Legal
+
+Copyright © 2026 PT Envy Sabelle Sinergi. All Rights Reserved.
+
+This source code is provided for architectural review, technical due diligence, and white‑hat security assessment only. Commercial deployment, fork modification, or operating an ESS Supernode outside of the authorized Sabelle Sovereign Syndicate requires a formal Genesis License.
+
+---
+
+*ESS Black Box — The Syndicate*  
+*Private. Autonomous. Resilient.*
+
