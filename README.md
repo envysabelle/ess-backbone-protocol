@@ -1,8 +1,42 @@
-# ESS — Sovereign Network Operating System
+<div align="center">
+  <img src="./assets/logo.png" alt="ESS Logo" width="200"/>
+  <h1>ESS — Sovereign Infrastructure Engine</h1>
+  <p><em>Autonomous · Self-Healing · Censorship-Resistant · Post-Quantum Ready</em></p>
+</div>
 
-> **ESS (Essential Sovereign System)** is not a messaging protocol. ESS is a **Network Operating System** — an autonomous infrastructure layer that enables sovereign, self-healing, and censorship-resistant networks to operate without dependency on public cloud providers, centralized authorities, or any third-party infrastructure.
->
-> This Rust codebase is the **Software Layer** of the ESS ecosystem. It is designed to run on top of **Sabelle Black Box** hardware (Physical Layer), but can be deployed on any VPS, bare-metal server, or cloud environment as a fully operator-controlled **Sovereign IaaS (Infrastructure as a Service)**.
+---
+
+## The Two Layers of ESS
+
+> Understanding the distinction between hardware and software is the foundation of everything ESS does.
+
+```
+────────────────────────────────────────────────────────
+          PHYSICAL LAYER — Sabelle Black Box          
+                                                      
+   Hardware node optimized for running ESS.           
+   Plug-and-play, isolated secure enclave,            
+   zero dependency on any hyperscaler.                
+                                                      
+   [Replaceable: VPS / Bare-metal / Cloud Instance]   
+─────────────────────┬──────────────────────────────────
+                     │ runs on top of
+─────────────────────▼──────────────────────────────────
+        SOFTWARE LAYER — ESS Node (this repo)         
+                                                      
+   Sovereign Infrastructure Engine in Rust.           
+   Manages identity, authority, routing, security,    
+   governance, and state consistency autonomously.    
+                                                      
+   This is what you deploy, configure, and operate.   
+────────────────────────────────────────────────────────
+```
+
+**ESS (Essential Sovereign System)** is not a messaging protocol. ESS is a **Sovereign Infrastructure Engine** — an autonomous infrastructure layer that enables sovereign, self-healing, and censorship-resistant networks to operate without dependency on public cloud providers, centralized authorities, or any third-party infrastructure.
+
+This Rust codebase is the **Software Layer** of the ESS ecosystem. It is designed to run on top of **Sabelle Black Box** hardware (Physical Layer), but can be deployed on any VPS, bare-metal server, or cloud environment as a fully operator-controlled **Sovereign IaaS (Infrastructure as a Service)**.
+
+> ESS transforms raw compute (hardware) into a **Sovereign IaaS** environment, where infrastructure services like networking, security, and state consistency are automated by the Ghost Engine.
 
 ---
 
@@ -10,124 +44,98 @@
 
 Most people hear "P2P" and immediately think: *a decentralized chat app*. ESS is not that.
 
-| Category | Common Examples | ESS |
-|---|---|---|
-| **Messaging P2P** | Signal, Session, Briar | ❌ Not this |
-| **File Sharing P2P** | BitTorrent, IPFS | ❌ Not this |
-| **Blockchain P2P** | Bitcoin, Ethereum | ❌ Not this |
-| **Sovereign Infrastructure** | — | ✅ This is ESS |
+| Category                     | Common Examples        | ESS           |
+| ---------------------------- | ---------------------- | ------------- |
+| **Messaging P2P**            | Signal, Session, Briar | ❌ Not this    |
+| **File Sharing P2P**         | BitTorrent, IPFS       | ❌ Not this    |
+| **Blockchain P2P**           | Bitcoin, Ethereum      | ❌ Not this    |
+| **Sovereign Infrastructure** | —                      | ✅ This is ESS |
 
 **P2P in ESS is the transport layer, not the end product.** Running on top of it is a full infrastructure ecosystem: decentralized governance, autonomous routing, immutable audit trails, and node identity management that depends on no single entity.
 
 ---
 
-## The Two Layers of ESS
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│               PHYSICAL LAYER — Sabelle Black Box                │
-│                                                                 │
-│   Hardware node optimized for running ESS.                      │
-│   Plug-and-play deployment, isolated secure enclave,            │
-│   with zero dependency on any hyperscaler.                      │
-│                                                                 │
-│   [Can be replaced by: VPS / Bare-metal / Cloud Instance]      │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │ runs on top of
-┌─────────────────────▼───────────────────────────────────────────┐
-│              SOFTWARE LAYER — ESS Node (this repo)              │
-│                                                                 │
-│   Network Operating System written in Rust.                     │
-│   Manages identity, authority, routing, security,               │
-│   governance, and state consistency autonomously.               │
-│                                                                 │
-│   This is what you deploy, configure, and operate.              │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
 ## Core Capabilities
 
-| Capability | Description |
-|---|---|
-| **Autonomous Mesh Routing** | libp2p + Kademlia DHT — the network discovers and sustains itself |
-| **Onion Routing** | 3-hop default, ephemeral X25519 ECDH + ChaCha20-Poly1305 per hop, no single point of observation |
-| **Post-Quantum Cryptography** | ML-KEM-1024 (Kyber) hybrid with X25519 via HKDF — resistant to quantum computing attacks |
-| **Ghost Engine** | Autonomous 8-state machine daemon: self-healing, peer management, panic isolation |
-| **Sovereign Governance** | Decentralized voting among supernodes — network policy is decided collectively, not by a single admin |
-| **CRDT State + Merkle-DAG** | Eventual consistency without a central coordinator + immutable audit trail for every state change |
-| **RBAC + Authority Chain** | 7 role levels, policy distributed via signed ConfigBundle |
-| **Forward Secrecy** | 24-hour key rotation via hash-chain — past sessions cannot be decrypted even if the current key is compromised |
-| **Shamir Secret Sharing** | Threshold scheme (k, n) over GF(2⁸) for distributing critical secrets |
-| **Encrypted Keystore** | AES-256-GCM + PBKDF2 for local key protection |
+| Capability                    | Description                                                                                                                   |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Autonomous Mesh Routing**   | libp2p + Kademlia DHT — the network discovers and sustains itself                                                             |
+| **Onion Routing**             | 3-hop minimum (enforced by `MIN_HOPS = 3`), ephemeral X25519 ECDH + ChaCha20-Poly1305 per hop, no single point of observation |
+| **Post-Quantum Cryptography** | ML-KEM-1024 (Kyber / FIPS 203) hybrid with X25519 via HKDF — resistant to quantum computing attacks                           |
+| **Ghost Engine**              | Autonomous 8-state machine daemon: self-healing, peer management, panic isolation, and network-wide zeroization               |
+| **Sovereign Governance**      | Decentralized voting among supernodes — network policy is decided collectively, not by a single admin                         |
+| **CRDT State + Merkle-DAG**   | Eventual consistency without a central coordinator + immutable forensic trail for every state change                          |
+| **RBAC + Authority Chain**    | 7 role levels, policy distributed via signed ConfigBundle                                                                     |
+| **Forward Secrecy**           | 24-hour key rotation via hash-chain — past sessions cannot be decrypted even if the current key is compromised                |
+| **Shamir Secret Sharing**     | Threshold scheme (k, n) over GF(2⁸) for distributing critical secrets                                                         |
+| **Encrypted Keystore**        | AES-256-GCM + PBKDF2 for local key protection                                                                                 |
 
 ---
 
 ## System Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                           main.rs                                │
-│         Lifecycle: Boot → Ready → Recovery → Shutdown            │
-└──────────────┬───────────────────────────────────────────────────┘
+────────────────────────────────────────────────────────
+                       main.rs                        
+          Boot → Ready → Recovery → Shutdown          
+───────────────┬────────────────────────────────────────
                │
-┌──────────────▼──────────────────────────────────────────────────┐
-│                      SOVEREIGNTY LAYER                           │
-│                                                                  │
-│  ┌─────────────────┐   ┌──────────────────────────────────────┐  │
-│  │   Identity      │   │        Authority Manager             │  │
-│  │   (Ed25519)     │   │   (RBAC + Signed Policy Bundle)      │  │
-│  └─────────────────┘   └──────────────────────────────────────┘  │
-│                                                                  │
-│  ┌─────────────────┐   ┌──────────────────────────────────────┐  │
-│  │  Governance     │   │         Security Runtime             │  │
-│  │  (On-chain      │   │   (Replay detection + Sig verify     │  │
-│  │   Voting)       │   │    + Timestamp window enforcement)   │  │
-│  └─────────────────┘   └──────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────┘
+───────────────▼────────────────────────────────────────
+                  SOVEREIGNTY LAYER                   
+                                                      
+  ┌────────────────────┐  ┌────────────────────────┐  
+  │      Identity      │  │   Authority Manager    │  
+  │     (Ed25519)      │  │ (RBAC + Policy Bundle) │  
+  └────────────────────┘  └────────────────────────┘  
+                                                      
+  ┌────────────────────┐  ┌────────────────────────┐  
+  │     Governance     │  │    Security Runtime    │  
+  │ (On-chain Voting)  │  │ (Replay + Sig verify)  │  
+  └────────────────────┘  └────────────────────────┘  
+────────────────────────────────────────────────────────
                │
-┌──────────────▼──────────────────────────────────────────────────┐
-│                     AUTONOMOUS LAYER                             │
-│                                                                  │
-│  ┌─────────────────────────────────────────────────────────────┐ │
-│  │                      Ghost Engine                           │ │
-│  │   Init → Wake → Beacon → Sync → Idle → Sleep               │ │
-│  │                              ↓                             │ │
-│  │                         Panic → Zeroized                   │ │
-│  │                                                            │ │
-│  │  Self-healing • Peer reputation • Autonomous isolation     │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-│                                                                  │
-│  ┌─────────────────┐   ┌──────────────────────────────────────┐  │
-│  │  CRDT State     │   │         Merkle-DAG                   │  │
-│  │  Engine         │   │   Immutable audit trail per          │  │
-│  │  (5 primitives) │   │   state change                       │  │
-│  └─────────────────┘   └──────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────┘
+───────────────▼────────────────────────────────────────
+                   AUTONOMOUS LAYER                   
+                                                      
+  ┌────────────────────────────────────────────────┐  
+  │                  Ghost Engine                  │  
+  │        Init→Wake→Beacon→Sync→Idle→Sleep        │  
+  │                       ↓                        │  
+  │                Panic → Zeroized                │  
+  │         Self-healing · Peer reputation         │  
+  └────────────────────────────────────────────────┘  
+                                                      
+  ┌────────────────────┐  ┌────────────────────────┐  
+  │     CRDT State     │  │       Merkle-DAG       │  
+  │   (5 primitives)   │  │ Immutable audit trail  │  
+  └────────────────────┘  └────────────────────────┘  
+────────────────────────────────────────────────────────
                │
-┌──────────────▼──────────────────────────────────────────────────┐
-│                      TRANSPORT LAYER                             │
-│                                                                  │
-│  libp2p Swarm                                                    │
-│  ├─ Kademlia DHT        (peer discovery & routing)               │
-│  ├─ Noise Protocol      (encrypted transport)                    │
-│  ├─ Yamux               (multiplexing)                           │
-│  ├─ Identify / Ping     (liveness)                               │
-│  └─ RequestResponse     (direct messaging)                       │
-│                                                                  │
-│  Onion Routing Layer                                             │
-│  (3-hop • Ephemeral X25519 + ChaCha20-Poly1305 per hop)         │
-│                                                                  │
-│  Post-Quantum Hybrid Layer                                       │
-│  (ML-KEM-1024 + X25519 → HKDF)                                  │
-└──────────────────────────────────────────────────────────────────┘
+───────────────▼────────────────────────────────────────
+                   TRANSPORT LAYER                    
+                                                      
+  libp2p Swarm                                        
+  ├─ Kademlia DHT    (discovery & routing)            
+  ├─ Noise Protocol  (encrypted transport)            
+  ├─ Yamux           (multiplexing)                   
+  ├─ Identify/Ping   (liveness)                       
+  └─ RequestResponse (direct messaging)               
+                                                      
+  Onion Routing (3-hop minimum)                       
+  X25519 ECDH + ChaCha20-Poly1305/hop                 
+                                                      
+  Post-Quantum Hybrid                                 
+  ML-KEM-1024 (FIPS 203) + X25519 → HKDF              
+                                                      
+  Zero-Trust Networking                               
+  Trust = Ed25519 keys + Auth-signed certs            
+────────────────────────────────────────────────────────
                │
-┌──────────────▼──────────────────────────────────────────────────┐
-│                   OBSERVABILITY LAYER                            │
-│            HTTP Dashboard: REST API + SSE Telemetry              │
-│                    Port: ESS_DASHBOARD_BIND                      │
-└──────────────────────────────────────────────────────────────────┘
+───────────────▼────────────────────────────────────────
+                 OBSERVABILITY LAYER                  
+            HTTP Dashboard: REST API + SSE            
+               Port: ESS_DASHBOARD_BIND               
+────────────────────────────────────────────────────────
 ```
 
 ### Startup Flow (`main.rs`)
@@ -185,35 +193,35 @@ ess-p2p-rs/
 │   ├── message.rs              # DirectRequest/Response message types
 │   ├── codec.rs                # Custom libp2p codec
 │   ├── system_event.rs         # SystemEvent, SystemEventKind enum
-│   │
+   
 │   ├── security.rs             # SecurityError taxonomy, signing helpers
 │   ├── security_runtime.rs     # SecurityRuntime (replay detection, signature verify)
-│   │
+   
 │   ├── onion.rs                # Onion routing: X25519 ECDH + ChaCha20-Poly1305
 │   ├── pqc.rs                  # Post-quantum: ML-KEM-1024 + X25519 hybrid
 │   ├── sss.rs                  # Shamir Secret Sharing over GF(2⁸)
 │   ├── id_rotation.rs          # Forward-secrecy key rotation (hash-chain, 24h)
-│   │
+   
 │   ├── crdt_state.rs           # CRDT: LWW-Register, G-Set, G-Counter, OR-Set
 │   ├── merkle_dag.rs           # Merkle-DAG audit trail for CRDT state
-│   │
+   
 │   ├── ghost.rs                # GhostEngine (8-state machine)
 │   ├── ghost_bridge.rs         # GhostBridge (channel Ghost ↔ Network)
 │   ├── ghost_health.rs         # GhostHealthSnapshot, health assessment
 │   ├── ghost_policy.rs         # GhostPolicy (reputation, throttle, self-heal)
 │   ├── ghost_runtime.rs        # GhostRuntime (async task spawner)
 │   ├── ghost_store.rs          # GhostSnapshot persistence
-│   │
+   
 │   ├── gateway.rs              # Gateway access validation, rate limiting, audit log
 │   ├── web.rs                  # WebRequest/Response via gateway
-│   │
+   
 │   ├── governance/
 │   │   ├── mod.rs              # Re-export governance module
 │   │   ├── engine.rs           # GovernanceEngine, Proposal, quorum voting
 │   │   ├── messages.rs         # ProposalType, VoteMessage, GovernanceMessage
 │   │   ├── store.rs            # Proposal persistence to sled
 │   │   └── tests.rs            # Governance unit tests
-│   │
+   
 │   ├── dashboard/
 │   │   ├── mod.rs
 │   │   ├── api.rs              # JSON payload builder (world, summary, logs)
@@ -223,7 +231,7 @@ ess-p2p-rs/
 │   │   ├── service.rs          # DashboardService (queries DashboardStore)
 │   │   └── store.rs            # DashboardStore (in-memory state)
 │   ├── dashboard_bridge.rs     # DashboardBridge (network updates → dashboard)
-│   │
+   
 │   └── network/
 │       ├── mod.rs
 │       ├── util.rs
@@ -235,7 +243,7 @@ ess-p2p-rs/
 │           ├── governance.rs   # Governance message handler in network layer
 │           ├── support.rs      # Network runtime helpers
 │           └── types.rs        # OnboardRequest, TelemetryEvent, shared types
-│
+
 └── tests/
     ├── onboarding_tests.rs
     ├── run_smoke.sh            # Smoke test: single node startup
@@ -286,7 +294,7 @@ ESS_DASHBOARD_BIND=127.0.0.1:8080
 # GHOST_MIN_AWAKE_CYCLES=10
 
 # ── ONION ROUTING ─────────────────────────────────────────────────────────────
-# ONION_HOPS=3             # 0 = disabled
+# ONION_HOPS=3             # Minimum enforced: MIN_HOPS = 3 (cannot be set below 3)
 # ONION_PAYLOAD_SIZE=1400  # Bytes after padding
 
 # ── LOGGING ───────────────────────────────────────────────────────────────────
@@ -348,15 +356,15 @@ bash run.sh --debug   # debug mode
 
 Configured via `NODE_ROLE` in `.env`. Each role has distinct access rights enforced by `AuthorityManager`:
 
-| Role | Level | Access Rights |
-|---|---|---|
-| `blocked` | 0 | No connections allowed |
-| `observer` | 1 | Connect only, cannot route |
-| `client` | 2 | Connect + basic routing |
-| `standard` | 3 | Connect + route + web traffic |
-| `gateway` | 4 | All standard + gateway access/egress |
-| `validator` | 5 | All gateway + admin update |
-| `supernode` | 6 | Full authority, can update cluster policy |
+| Role        | Level | Access Rights                             | Decision Power                |
+| ----------- | ----- | ----------------------------------------- | ----------------------------- |
+| `blocked`   | 0     | No connections allowed                    | None                          |
+| `observer`  | 1     | Connect only, cannot route                | None                          |
+| `client`    | 2     | Connect + basic routing                   | None (Consumer)               |
+| `standard`  | 3     | Connect + route + web traffic             | None (Consumer)               |
+| `gateway`   | 4     | All standard + gateway access/egress      | None                          |
+| `validator` | 5     | All gateway + admin update                | Local Consensus               |
+| `supernode` | 6     | Full authority, can update cluster policy | **Network Governance (Vote)** |
 
 The role is stored in `data/identity/role.txt` and bound to `EssIdentity` at startup. Role changes issued by an authority supernode are propagated via a cryptographically signed `ConfigBundle`.
 
@@ -372,25 +380,27 @@ Init → Wake → Beacon → Sync → Idle → Sleep
                                Panic → Zeroized
 ```
 
-| State | Description |
-|---|---|
-| `Init` | Initialization, config validation |
-| `Wake` | Active, starting processing |
-| `Beacon` | Broadcasting presence to the network |
-| `Sync` | Synchronizing state with peers |
-| `Idle` | No activity, waiting |
-| `Sleep` | Resource-saving mode |
-| `Panic` | Critical condition, self-isolation |
-| `Zeroized` | Self-destruct: all sensitive data is zeroized |
+| State      | Description                                                        |
+| ---------- | ------------------------------------------------------------------ |
+| `Init`     | Initialization, config validation                                  |
+| `Wake`     | Active, starting processing                                        |
+| `Beacon`   | Broadcasting presence to the network                               |
+| `Sync`     | Synchronizing state with peers                                     |
+| `Idle`     | No activity, waiting                                               |
+| `Sleep`    | Resource-saving mode                                               |
+| `Panic`    | Critical condition, self-isolation                                 |
+| `Zeroized` | Self-destruct: all sensitive data is securely zeroized from memory |
 
 ### Ghost Policy
 
-| Parameter | Default | Description |
-|---|---|---|
-| `min_reputation_to_connect` | 0.2 | Minimum peer reputation to accept a connection |
-| `quarantine_threshold` | < 0.2 | Peer isolation threshold |
-| `panic_on_critical` | true | Auto-panic on critical condition |
-| `drop_on_policy_denial` | true | Drop connection if denied by policy |
+| Parameter                   | Default | Description                                    |
+| --------------------------- | ------- | ---------------------------------------------- |
+| `min_reputation_to_connect` | 0.2     | Minimum peer reputation to accept a connection |
+| `quarantine_threshold`      | < 0.2   | Peer isolation threshold                       |
+| `panic_on_critical`         | true    | Auto-panic on critical condition               |
+| `drop_on_policy_denial`     | true    | Drop connection if denied by policy            |
+
+- **Anti-Tamper Logic:** Ghost can trigger a network-wide `Panic` state if it detects abnormal consensus partition or hardware compromise, instantly isolating the affected node — before any human operator needs to intervene.
 
 ---
 
@@ -398,20 +408,20 @@ Init → Wake → Beacon → Sync → Idle → Sleep
 
 ### Cryptography Stack
 
-| Layer | Algorithm | Implementation |
-|---|---|---|
-| Identity | Ed25519 | `ed25519-dalek`, libp2p keypair |
-| Transport | Noise Protocol + Yamux | libp2p built-in |
-| Onion Routing | Ephemeral X25519 ECDH + ChaCha20-Poly1305 | `x25519-dalek`, `chacha20poly1305` |
-| Post-Quantum | ML-KEM-1024 (Kyber) + X25519 hybrid | `ml-kem` + HKDF-SHA3-256 |
-| Keystore | AES-256-GCM + PBKDF2-SHA256 | `aes-gcm`, `pbkdf2` |
-| Secret Sharing | Shamir GF(2⁸) threshold | Custom in `sss.rs` |
-| Message Auth | HMAC-SHA256 | `hmac` + `sha2` |
-| Key Derivation | HKDF-SHA256 | `hkdf` |
+| Layer          | Algorithm                                          | Implementation                     |
+| -------------- | -------------------------------------------------- | ---------------------------------- |
+| Identity       | Ed25519                                            | `ed25519-dalek`, libp2p keypair    |
+| Transport      | Noise Protocol + Yamux                             | libp2p built-in                    |
+| Onion Routing  | Ephemeral X25519 ECDH + ChaCha20-Poly1305          | `x25519-dalek`, `chacha20poly1305` |
+| Post-Quantum   | ML-KEM-1024 (Kyber / **FIPS 203**) + X25519 hybrid | `ml-kem` + HKDF-SHA3-256           |
+| Keystore       | AES-256-GCM + PBKDF2-SHA256                        | `aes-gcm`, `pbkdf2`                |
+| Secret Sharing | Shamir GF(2⁸) threshold                            | Custom in `sss.rs`                 |
+| Message Auth   | HMAC-SHA256                                        | `hmac` + `sha2`                    |
+| Key Derivation | HKDF-SHA256                                        | `hkdf`                             |
 
 ### Onion Routing (`onion.rs`)
 
-Each message passes through 3 hops by default:
+Each message passes through a **minimum of 3 hops** (enforced via `MIN_HOPS = 3` — users cannot configure below this threshold, which would risk metadata leakage):
 
 1. Sender generates an ephemeral X25519 keypair per hop
 2. ECDH between the ephemeral private key + recipient hop's X25519 public key → shared secret
@@ -436,7 +446,7 @@ Past seeds cannot be computed from the current seed (backward secrecy). The Peer
 
 ### Post-Quantum (`pqc.rs`)
 
-Hybrid key exchange using ML-KEM-1024 + X25519 with HKDF:
+Hybrid key exchange using **ML-KEM-1024 (standardized as FIPS 203)** + X25519 with HKDF. ESS follows the latest NIST post-quantum standard, making it future-proof against quantum computing attacks:
 
 ```
 final_key = HKDF(mlkem_shared_secret || x25519_shared_secret)
@@ -452,13 +462,13 @@ A decentralized voting system among supernodes for network policy changes. No si
 
 ### Proposal Types
 
-| Proposal | Description |
-|---|---|
-| `AddSupernode` | Add a new supernode to the authority |
-| `RemoveSupernode` | Remove a supernode from the authority |
-| `UpdatePolicy` | Update network policy (allowed_peers, actions, bootstrap_addrs) |
-| `BanPeer` | Ban a peer from the network |
-| `RotateKeys` | Trigger a network-wide key rotation |
+| Proposal          | Description                                                     |
+| ----------------- | --------------------------------------------------------------- |
+| `AddSupernode`    | Add a new supernode to the authority                            |
+| `RemoveSupernode` | Remove a supernode from the authority                           |
+| `UpdatePolicy`    | Update network policy (allowed_peers, actions, bootstrap_addrs) |
+| `BanPeer`         | Ban a peer from the network                                     |
+| `RotateKeys`      | Trigger a network-wide key rotation                             |
 
 ### Voting Flow
 
@@ -478,13 +488,13 @@ Proposals and votes are persisted to a `sled` database via `governance/store.rs`
 
 5 CRDT primitives for strong eventual consistency:
 
-| Type | Description | Use Case |
-|---|---|---|
-| `LwwRegister<T>` | Last-Write-Wins; highest timestamp wins | Config values, status |
-| `GSet<T>` | Grow-only set; elements can only be added | Peer list, audit entries |
-| `GCounter` | Grow-only counter per node | Message count, hop count |
-| `LwwMap<K,V>` | LWW per key | Peer registry |
-| `OrSet<T>` | Observed-Remove Set | Peer presence with remove support |
+| Type             | Description                               | Use Case                          |
+| ---------------- | ----------------------------------------- | --------------------------------- |
+| `LwwRegister<T>` | Last-Write-Wins; highest timestamp wins   | Config values, status             |
+| `GSet<T>`        | Grow-only set; elements can only be added | Peer list, audit entries          |
+| `GCounter`       | Grow-only counter per node                | Message count, hop count          |
+| `LwwMap<K,V>`    | LWW per key                               | Peer registry                     |
+| `OrSet<T>`       | Observed-Remove Set                       | Peer presence with remove support |
 
 ### Merkle-DAG Audit Trail (`merkle_dag.rs`)
 
@@ -502,6 +512,9 @@ MerkleNode {
 
 The buffer is limited to 1024 nodes (circular). Used for verifying change history and detecting network partitions.
 
+- **Why both CRDT and Merkle-DAG?** CRDT handles data convergence across nodes without coordination. The Merkle-DAG complements it by providing an **immutable forensic trail**, allowing operators to verify *who changed what and when* across the entire mesh — something CRDT alone cannot answer.
+- **Auditability:** Every state transition is cryptographically chained, making retroactive tampering detectable.
+
 ---
 
 ## HTTP Dashboard
@@ -510,15 +523,15 @@ The HTTP server runs automatically on `ESS_DASHBOARD_BIND` (default: `127.0.0.1:
 
 ### Endpoints
 
-| Endpoint | Method | Description |
-|---|---|---|
-| `/` | GET | Node status: world state, ghost, authority, peers |
-| `/summary` | GET | Summary: total nodes, supernodes, relays, clients |
-| `/nodes` | GET | List of all known nodes |
-| `/routes` | GET | Active routing table |
-| `/logs` | GET | Recent log events |
-| `/health` | GET | Node health check (healthy / degraded / critical) |
-| `/events` | GET | SSE live telemetry stream |
+| Endpoint   | Method | Description                                       |
+| ---------- | ------ | ------------------------------------------------- |
+| `/`        | GET    | Node status: world state, ghost, authority, peers |
+| `/summary` | GET    | Summary: total nodes, supernodes, relays, clients |
+| `/nodes`   | GET    | List of all known nodes                           |
+| `/routes`  | GET    | Active routing table                              |
+| `/logs`    | GET    | Recent log events                                 |
+| `/health`  | GET    | Node health check (healthy / degraded / critical) |
+| `/events`  | GET    | SSE live telemetry stream                         |
 
 ### Example Response `/`
 
@@ -665,29 +678,30 @@ data/
 
 ## Key Dependencies
 
-| Crate | Version | Purpose |
-|---|---|---|
-| `tokio` | 1.x | Async runtime |
-| `libp2p` | 0.56 | P2P networking stack |
-| `serde` / `serde_json` | 1.x | Serialization |
-| `ed25519-dalek` | 1.x | Ed25519 signatures |
-| `x25519-dalek` | 2.x | X25519 ECDH (onion routing) |
-| `chacha20poly1305` | 0.10 | AEAD encryption (onion) |
-| `aes-gcm` | 0.10 | AEAD encryption (keystore) |
-| `ml-kem` | 0.3 | ML-KEM-1024 post-quantum |
-| `hkdf` | 0.12 | Key derivation |
-| `hmac` | 0.12 | Message authentication |
-| `pbkdf2` | 0.12 | Password-based key derivation |
-| `sled` | 0.34 | Embedded database (Kademlia store, governance) |
-| `dashmap` | 5.x | Concurrent hash map |
-| `sha2` / `sha3` | 0.10 | Hash functions |
-| `zeroize` | 1.7 | Secure memory zeroization |
-| `tracing` / `tracing-subscriber` | 0.1/0.3 | Structured logging |
-| `chrono` | 0.4 | Timestamp handling |
-| `uuid` | 1.x | UUID generation (CRDT node IDs) |
+| Crate                            | Version | Purpose                                        |
+| -------------------------------- | ------- | ---------------------------------------------- |
+| `tokio`                          | 1.x     | Async runtime                                  |
+| `libp2p`                         | 0.56    | P2P networking stack                           |
+| `serde` / `serde_json`           | 1.x     | Serialization                                  |
+| `ed25519-dalek`                  | 1.x     | Ed25519 signatures                             |
+| `x25519-dalek`                   | 2.x     | X25519 ECDH (onion routing)                    |
+| `chacha20poly1305`               | 0.10    | AEAD encryption (onion)                        |
+| `aes-gcm`                        | 0.10    | AEAD encryption (keystore)                     |
+| `ml-kem`                         | 0.3     | ML-KEM-1024 / FIPS 203 post-quantum            |
+| `hkdf`                           | 0.12    | Key derivation                                 |
+| `hmac`                           | 0.12    | Message authentication                         |
+| `pbkdf2`                         | 0.12    | Password-based key derivation                  |
+| `sled`                           | 0.34    | Embedded database (Kademlia store, governance) |
+| `dashmap`                        | 5.x     | Concurrent hash map                            |
+| `sha2` / `sha3`                  | 0.10    | Hash functions                                 |
+| `zeroize`                        | 1.7     | Secure memory zeroization                      |
+| `tracing` / `tracing-subscriber` | 0.1/0.3 | Structured logging                             |
+| `chrono`                         | 0.4     | Timestamp handling                             |
+| `uuid`                           | 1.x     | UUID generation (CRDT node IDs)                |
 
 ---
 
-*ESS — Sovereign Network Operating System · Software Layer v1.0*
+*ESS — Sovereign Infrastructure Engine · Software Layer v1.0*
 *Optimized for Sabelle Black Box · Compatible with VPS, Bare-metal, and Cloud*
+
 
